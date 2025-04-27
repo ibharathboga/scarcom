@@ -38,3 +38,19 @@ export async function getUserByUsername(username) {
 	const [user] = iusers;
 	return user;
 }
+
+export async function getConversationsByUserId(userId) {
+	const conversations = await db
+		.select({
+			userId: schema.users.id,
+			username: schema.users.username,
+			lastMessageAt: orm.max(schema.messages.createdAt).as("lastMessageAt"),
+		})
+		.from(schema.messages)
+		.innerJoin(schema.users, orm.eq(schema.users.id, schema.messages.userId))
+		.where(orm.not(orm.eq(schema.messages.userId, userId)))
+		.groupBy(schema.users.id, schema.users.username)
+		.orderBy(orm.desc(orm.max(schema.messages.createdAt)));
+
+	return conversations;
+}
