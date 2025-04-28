@@ -19,9 +19,12 @@ import { VisibilityWrapper } from "@/lib/utils";
 import UserInfoCard from "./UserInfoCard";
 
 import useSearchEvents from "@/hooks/useSearchEvents";
+import useConversations from "@/hooks/useConversations";
 
 export default function ActivityPanel() {
 	const session = useSession();
+
+	const { isConversationsLoading, conversationsList } = useConversations();
 
 	const {
 		searchQuery,
@@ -59,7 +62,21 @@ export default function ActivityPanel() {
 
 			<div className="grow border rounded-lg flex flex-col space-y-2 px-1 overflow-hidden">
 				<VisibilityWrapper isHide={showSearchResults || searchResultsIsLoading}>
-					<div className="py-2 px-1 mx-auto">🚧 Conversations 🚧</div>
+					<div className="py-2 px-1 mx-auto"> Conversations </div>
+					<VisibilityWrapper isHide={!isConversationsLoading}>
+						<div className="grow flex items-center justify-center">
+							<LoadingIcon className="animate-spin" />
+						</div>
+					</VisibilityWrapper>
+					<VisibilityWrapper isHide={isConversationsLoading}>
+						<ScrollArea className="h-full">
+							<div className="flex flex-col space-y-3 py-2">
+								{conversationsList?.map((user, index) => (
+									<UserCard key={index} user={user} />
+								))}
+							</div>
+						</ScrollArea>
+					</VisibilityWrapper>
 				</VisibilityWrapper>
 
 				<VisibilityWrapper isHide={!showSearchResults}>
