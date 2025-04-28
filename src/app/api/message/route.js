@@ -29,12 +29,12 @@ export async function POST(request) {
 	const { channelId, userId, message } = await request.json();
 
 	try {
-		const newMessage = await db.createMessage(channelId, userId, message);
+		const { newMessage, newMessageInfo } = await db.createMessage(channelId, userId, message);
+		console.log(newMessage)
+		console.log(newMessageInfo)
 
-		await pusher.trigger(`channel_${channelId}`, "new_message", {
-			...newMessage,
-			username: newMessage.username,
-		});
+		await pusher.trigger(`channel_${channelId}`, "new_message", newMessage);
+		await pusher.trigger('conversations', 'new_message', newMessageInfo)
 
 		return Response.json({ ok: true });
 	} catch (error) {
