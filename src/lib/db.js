@@ -5,6 +5,7 @@ import {
 	addUser,
 	searchUser,
 	getUserByUsername,
+	getConversationsByUserId
 } from "./db-functions/db-user";
 
 import {
@@ -27,7 +28,7 @@ import {
 
 export { db };
 
-export { getUserByEmail, addUser, searchUser, getUserByUsername };
+export { getUserByEmail, addUser, searchUser, getUserByUsername, getConversationsByUserId };
 
 export { addMessageToGlobal, getGlobalMessages, deleteGlobalMessage };
 
