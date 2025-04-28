@@ -42,8 +42,8 @@ export async function getUserByUsername(username) {
 export async function getConversationsByUserId(userId) {
 	const conversations = await db
 		.select({
-			userId: schema.users.id,
 			username: schema.users.username,
+			email: schema.users.email,
 			lastMessageAt: orm.max(schema.messages.createdAt).as("lastMessageAt"),
 		})
 		.from(schema.messages)
