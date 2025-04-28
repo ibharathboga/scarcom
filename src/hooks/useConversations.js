@@ -74,6 +74,6 @@ export default function useConversations() {
     return {
         isConversationsLoading: isLoading,
         setIsConversationsLoading: setIsLoading,
-        list,
+        conversationsList: list,
     };
 }
