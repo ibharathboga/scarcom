@@ -26,8 +26,8 @@ export default function useConversations() {
             console.log(response);
             if (response.ok) {
                 const data = await response.json();
-                console.log(data);
-                setList(data);
+                console.log(data.conversations);
+                setList(data.conversations);
             } else {
                 console.error("Failed to fetch conversations");
             }
@@ -38,8 +38,32 @@ export default function useConversations() {
     };
 
     const updateConversationsList = (newMessageInfo) => {
-        console.log(newMessageInfo);
-    }
+        if (!session.data?.user) return;
+
+        const currentUsername = session.data.user.username;
+        const { senderName, senderEmail, receiverName, receiverEmail } = newMessageInfo;
+
+        const isCurrentUserInvolved = currentUsername === senderName || currentUsername === receiverName;
+        if (!isCurrentUserInvolved) return;
+
+        const friendName = currentUsername === senderName ? receiverName : senderName;
+        const friendEmail = currentUsername === senderName ? receiverEmail : senderEmail;
+
+        setList(prevList => {
+            let updatedList = prevList.filter(conversation => conversation.username !== friendName);
+
+            const friend = {
+                username: friendName,
+                email: friendEmail,
+                lastMessageTime: new Date(),
+            };
+
+            updatedList = [friend, ...updatedList];
+
+            return updatedList;
+        });
+    };
+
 
     useEffect(() => {
         if (session.status === "loading") return;
@@ -50,7 +74,6 @@ export default function useConversations() {
     return {
         isConversationsLoading: isLoading,
         setIsConversationsLoading: setIsLoading,
-        word,
         list,
     };
 }
